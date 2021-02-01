@@ -1,29 +1,46 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { UserId } from '~/domain/users/vo/UserId'
+import { User } from '~/domain/users/entity/User'
+import { CogniteUserService } from '~/domain/users/CogniteUserService'
+import { LoginError } from '~/domain/users/UserService'
+import { Status } from '~/utils/status'
 
-export interface User {
-  id: number
-  name: string
-}
+const userService = new CogniteUserService('TODO')
 
 @Module({ name: 'UserStore', namespaced: true, stateFactory: true })
 export default class UserStore extends VuexModule {
-  private _users: User[] = []
+  currentUser: User | null = null
+  loginStatus: Status = 'init'
+  loginError: LoginError | null = null
 
-  get users(): User[] {
-    return this._users
-  }
-
-  get userNames(): string[] {
-    return this._users.map((x) => x.name)
+  @Mutation
+  private loading() {
+    this.loginError = null
+    this.loginStatus = 'loading'
   }
 
   @Mutation
-  private _add(user: User): void {
-    this._users.push(user)
+  private success(user: User) {
+    this.loginError = null
+    this.currentUser = user
+    this.loginStatus = 'success'
   }
 
-  @Action
-  add(user: User) {
-    this._add(user)
+  @Mutation
+  private failure(error: LoginError) {
+    this.loginError = error
+    this.currentUser = null
+    this.loginStatus = 'failure'
+  }
+
+  get isLogin(): boolean {
+    return !!this.currentUser
+  }
+
+  @Action({ rawError: true })
+  async login(payload: { userId: UserId; password: string }) {
+    this.loading()
+    const userOrErr = await userService.login(payload.userId, payload.password)
+    userOrErr.biMap(this.failure, this.success)
   }
 }
