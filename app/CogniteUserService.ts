@@ -1,7 +1,7 @@
 import { Either, left, right } from 'owlelia'
 import { UserId } from '~/domain/users/vo/UserId'
 import { User } from '~/domain/users/entity/User'
-import { LoginError, UserService } from '~/domain/users/UserService'
+import { LoginError, UserService } from '~/app/UserService'
 import { asyncSleep } from '~/utils/sleep'
 
 type CogniteClientFaked = any

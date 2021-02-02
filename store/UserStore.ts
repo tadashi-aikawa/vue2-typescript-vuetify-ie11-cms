@@ -1,8 +1,8 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { UserId } from '~/domain/users/vo/UserId'
 import { User } from '~/domain/users/entity/User'
-import { CogniteUserService } from '~/domain/users/CogniteUserService'
-import { LoginError } from '~/domain/users/UserService'
+import { CogniteUserService } from '~/app/CogniteUserService'
+import { LoginError } from '~/app/UserService'
 import { Status } from '~/utils/status'
 
 const userService = new CogniteUserService('TODO')

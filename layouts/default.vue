@@ -2,6 +2,11 @@
   <v-app dark>
     <v-app-bar fixed app>
       <v-toolbar-title v-text="env.japanese" />
+      <v-alert dense border="left" type="warning" class="ma-4">
+        <strong>
+          イベント終了時刻が設定されていません。ただちに設定してください
+        </strong>
+      </v-alert>
       <v-spacer />
       <v-btn v-if="isLogin">
         <v-icon>ログアウト</v-icon>
@@ -32,7 +37,10 @@ export default defineComponent({
   },
   setup() {
     const env = computed(() => getEnv())
-    const isLogin = computed(() => userStore.isLogin)
+
+    // FIXME: ちゃんと判定する
+    // const isLogin = computed(() => userStore.isLogin)
+    const isLogin = true
 
     return {
       env: env.value,
