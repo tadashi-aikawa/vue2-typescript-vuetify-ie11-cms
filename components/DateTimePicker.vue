@@ -56,10 +56,11 @@
 <script lang="ts">
 import { defineComponent, reactive } from '@vue/composition-api'
 import { DateTime } from 'owlelia'
+import { Nullable } from '~/utils/types'
 
 export default defineComponent({
   props: {
-    dateTime: { type: Object as () => DateTime, default: null },
+    dateTime: { type: Object as () => Nullable<DateTime>, required: true },
   },
   setup(_props, { emit }) {
     const state = reactive({

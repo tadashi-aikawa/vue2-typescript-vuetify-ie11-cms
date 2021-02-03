@@ -3,10 +3,8 @@
     <v-col cols="12" xs="6" sm="8" md="10" lg="8" xl="6">
       <v-form ref="form" v-model="state.valid" lazy-validation>
         <v-row dense>
-          <v-col cols="12" md="2" class="d-flex align-center justify-center">
-            世界
-          </v-col>
-          <v-col cols="12" md="10" class="d-flex align-center justify-center">
+          <v-col cols="12" md="2" :class="centerClass"> 世界 </v-col>
+          <v-col cols="12" md="10" :class="centerClass">
             <v-select
               v-model="state.world"
               :items="worlds"
@@ -17,10 +15,8 @@
           </v-col>
         </v-row>
         <v-row v-if="state.world" dense>
-          <v-col cols="12" md="2" class="d-flex align-center justify-center">
-            目的
-          </v-col>
-          <v-col cols="12" md="10" class="d-flex align-center justify-center">
+          <v-col cols="12" md="2" :class="centerClass"> 目的 </v-col>
+          <v-col cols="12" md="10" :class="centerClass">
             <v-select
               v-model="state.goal"
               :items="state.world.goals"
@@ -31,9 +27,7 @@
           </v-col>
         </v-row>
         <v-row v-if="state.goal" dense>
-          <v-col cols="12" md="2" class="d-flex align-center justify-center">
-            発生区間
-          </v-col>
+          <v-col cols="12" md="2" :class="centerClass"> 発生区間 </v-col>
           <v-col cols="12" md="4">
             <v-select
               v-model="state.beginCity"
@@ -43,7 +37,7 @@
               item-text="name"
             ></v-select>
           </v-col>
-          <v-col cols="12" md="1" class="d-flex align-center justify-center">
+          <v-col cols="12" md="1" :class="centerClass">
             <span class="display-1">~</span>
           </v-col>
           <v-col cols="12" md="4">
@@ -57,13 +51,11 @@
           </v-col>
         </v-row>
         <v-row v-if="state.goal" dense>
-          <v-col cols="12" md="2" class="d-flex align-center justify-center">
-            発生期間
-          </v-col>
+          <v-col cols="12" md="2" :class="centerClass"> 発生期間 </v-col>
           <v-col cols="12" md="4">
             <date-time-picker :date-time.sync="state.beginDate" />
           </v-col>
-          <v-col cols="12" md="1" class="d-flex align-center justify-center">
+          <v-col cols="12" md="1" :class="centerClass">
             <span class="display-1">~</span>
           </v-col>
           <v-col cols="12" md="4">
@@ -133,6 +125,7 @@ export default defineComponent({
       worlds,
       submit,
       submitError,
+      centerClass: ['d-flex', 'justify-center', 'align-center'],
     }
   },
 })
