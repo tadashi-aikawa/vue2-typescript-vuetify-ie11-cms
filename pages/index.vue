@@ -25,7 +25,7 @@ import { defineComponent } from '@vue/composition-api'
 export default defineComponent({
   setup() {
     const items: { name: string; path: string }[] = [
-      { name: 'イベント情報管理', path: 'events/admin' },
+      { name: 'クエスト管理', path: 'quests/admin' },
       { name: 'ガチャ情報管理', path: 'gacha' },
       { name: 'ガチャマスタ管理', path: 'gacha-master' },
       { name: 'お知らせ管理', path: 'information' },
