@@ -60,7 +60,7 @@ import { Nullable } from '~/utils/types'
 
 export default defineComponent({
   props: {
-    dateTime: { type: Object as () => Nullable<DateTime>, required: true },
+    dateTime: { type: Object as () => Nullable<DateTime>, default: null },
   },
   setup(_props, { emit }) {
     const state = reactive({

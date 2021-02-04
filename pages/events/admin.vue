@@ -4,7 +4,7 @@
       <v-form ref="form" v-model="state.valid" lazy-validation>
         <v-row dense>
           <v-col cols="12" md="2" :class="centerClass"> 世界 </v-col>
-          <v-col cols="12" md="10" :class="centerClass">
+          <v-col cols="12" md="4" :class="centerClass">
             <v-select
               v-model="state.world"
               :items="worlds"
@@ -16,7 +16,7 @@
         </v-row>
         <v-row v-if="state.world" dense>
           <v-col cols="12" md="2" :class="centerClass"> 目的 </v-col>
-          <v-col cols="12" md="10" :class="centerClass">
+          <v-col cols="12" md="4" :class="centerClass">
             <v-select
               v-model="state.goal"
               :items="state.world.goals"
@@ -50,7 +50,7 @@
             ></v-select>
           </v-col>
         </v-row>
-        <v-row v-if="state.goal" dense>
+        <v-row dense>
           <v-col cols="12" md="2" :class="centerClass"> 発生期間 </v-col>
           <v-col cols="12" md="4">
             <date-time-picker :date-time.sync="state.beginDate" />
@@ -59,7 +59,28 @@
             <span class="display-1">~</span>
           </v-col>
           <v-col cols="12" md="4">
-            <date-time-picker :date-time.sync="state.beginDate" />
+            <date-time-picker :date-time.sync="state.endDate" />
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col cols="12" md="2" :class="centerClass"> 難易度 </v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="state.level"
+              :items="levels"
+              label="難易度"
+              return-object
+              item-text="name"
+            >
+              <template #item="{ item }">
+                <v-icon :color="item.icon.color">{{ item.icon.name }}</v-icon>
+                <span class="ml-1" v-text="item.name"></span>
+              </template>
+              <template #selection="{ item }">
+                <v-icon :color="item.icon.color">{{ item.icon.name }}</v-icon>
+                <span class="ml-1" v-text="item.name"></span>
+              </template>
+            </v-select>
           </v-col>
         </v-row>
 
@@ -90,6 +111,7 @@ import { Goal } from '~/domain/quests/entity/Goal'
 import { City } from '~/domain/quests/entity/City'
 import { Nullable } from '~/utils/types'
 import DateTimePicker from '~/components/DateTimePicker.vue'
+import { Level } from '~/domain/quests/entity/Level'
 
 export default defineComponent({
   components: {
@@ -102,7 +124,8 @@ export default defineComponent({
       beginCity: null as Nullable<City>,
       endCity: null as Nullable<City>,
       beginDate: null as Nullable<DateTime>,
-      isBeginDateVisible: false,
+      endDate: null as Nullable<DateTime>,
+      level: null as Nullable<Level>,
       valid: false,
     })
 
@@ -125,6 +148,7 @@ export default defineComponent({
       worlds,
       submit,
       submitError,
+      levels: Level.values(),
       centerClass: ['d-flex', 'justify-center', 'align-center'],
     }
   },
