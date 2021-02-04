@@ -62,10 +62,10 @@ export default defineComponent({
   props: {
     dateTime: { type: Object as () => Nullable<DateTime>, default: null },
   },
-  setup(_props, { emit }) {
+  setup(props, { emit }) {
     const state = reactive({
-      displayDate: '',
-      displayTime: '',
+      displayDate: props.dateTime?.displayDate ?? '',
+      displayTime: props.dateTime?.displayTime ?? '',
       dateMenu: false,
       timeMenu: false,
     })

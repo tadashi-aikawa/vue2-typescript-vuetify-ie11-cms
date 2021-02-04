@@ -16,6 +16,7 @@ interface Props {
   endDate: DateTime
   level: Level
   questOptions: QuestOption[]
+  description: string
 }
 
 declare const _brand: unique symbol
@@ -24,5 +25,45 @@ export class Quest extends Entity<Props> {
 
   static of(props: Props): Quest {
     return new Quest(props.id, props)
+  }
+
+  get id(): QuestId {
+    return this._props.id
+  }
+
+  get world(): World {
+    return this._props.world
+  }
+
+  get goal(): Goal {
+    return this._props.goal
+  }
+
+  get beginCity(): City {
+    return this._props.beginCity
+  }
+
+  get endCity(): City {
+    return this._props.endCity
+  }
+
+  get beginDate(): DateTime {
+    return this._props.beginDate
+  }
+
+  get endDate(): DateTime {
+    return this._props.endDate
+  }
+
+  get level(): Level {
+    return this._props.level
+  }
+
+  get questOptions(): QuestOption[] {
+    return this._props.questOptions
+  }
+
+  get description(): string {
+    return this._props.description
   }
 }

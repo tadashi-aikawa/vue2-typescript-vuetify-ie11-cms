@@ -1,26 +1,29 @@
 <template>
-  <v-row justify="center" align="center" style="height: 100%">
+  <v-row justify="center" align="center" style="height: 100%" class="pt-5">
     <v-col cols="12" xs="6" sm="8" md="10" lg="8" xl="6">
+      <v-menu
+        value="true"
+        :close-on-content-click="false"
+        :close-on-click="false"
+        :position-x="40"
+        :position-y="100"
+        max-width="400"
+        absolute
+      >
+        <v-textarea
+          class="debug"
+          :value="debugJson"
+          rows="25"
+          auto-grow
+          outlined
+          full-width
+          readonly
+        />
+      </v-menu>
       <v-form ref="form" v-model="state.valid" lazy-validation>
         <v-row dense>
           <v-col cols="12" md="2" :class="centerClass">
-            <v-menu
-              value="true"
-              :close-on-content-click="false"
-              :close-on-click="false"
-              left
-              nudge-left="100"
-            >
-              <template #activator><span>世界</span></template>
-              <v-textarea
-                class="debug"
-                :value="debugJson"
-                auto-grow
-                outlined
-                full-width
-                readonly
-              />
-            </v-menu>
+            <span>世界</span>
           </v-col>
           <v-col cols="12" md="4" :class="centerClass">
             <v-select
@@ -149,7 +152,7 @@
             class="mr-4"
             @click="submit"
           >
-            登録
+            確認画面へ移動する
           </v-btn>
         </div>
       </v-form>
@@ -168,33 +171,33 @@ import {
   ref,
   watch,
 } from '@vue/composition-api'
-import { DateTime } from 'owlelia'
-import { World } from '~/domain/quests/entity/World'
-import { worldStore } from '~/utils/store-accessor'
-import { Goal } from '~/domain/quests/entity/Goal'
-import { City } from '~/domain/quests/entity/City'
-import { Nullable } from '~/utils/types'
+import { questStore, worldStore } from '~/utils/store-accessor'
 import DateTimePicker from '~/components/DateTimePicker.vue'
 import { Level } from '~/domain/quests/vo/Level'
 import { QuestOption } from '~/domain/quests/vo/QuestOption'
+import { Quest } from '~/domain/quests/entity/Quest'
 
 export default defineComponent({
   components: {
     DateTimePicker,
   },
-  setup() {
+  // Vue3に移行したらrootは使えなくなる。代わりにuseRouterを使う。
+  // https://next.router.vuejs.org/guide/advanced/composition-api.html#accessing-the-router-and-current-route-inside-setup
+  setup(_props, { root }) {
     const form = ref<{ validate(): boolean }>()
 
+    const currentQuest = computed(() => questStore.currentQuest)
+
     const state = reactive({
-      world: null as Nullable<World>,
-      goal: null as Nullable<Goal>,
-      beginCity: null as Nullable<City>,
-      endCity: null as Nullable<City>,
-      beginDate: null as Nullable<DateTime>,
-      endDate: null as Nullable<DateTime>,
-      level: null as Nullable<Level>,
-      questOptions: [] as QuestOption[],
-      description: '',
+      world: currentQuest.value?.world,
+      goal: currentQuest.value?.goal,
+      beginCity: currentQuest.value?.beginCity,
+      endCity: currentQuest.value?.endCity,
+      beginDate: currentQuest.value?.beginDate,
+      endDate: currentQuest.value?.endDate,
+      level: currentQuest.value?.level,
+      questOptions: currentQuest.value?.questOptions ?? ([] as QuestOption[]),
+      description: currentQuest.value?.description,
       valid: false,
     })
     watch(
@@ -221,6 +224,13 @@ export default defineComponent({
     const submit = () => {
       if (form.value?.validate()) {
         // TODO: 登録処理
+        questStore.updateCurrentQuest(
+          Quest.of({
+            id: 'test',
+            ...state,
+          })
+        )
+        root.$options.router.push({ path: 'confirm' })
       }
     }
 
