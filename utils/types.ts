@@ -4,3 +4,5 @@ export interface MaterialIcon {
   name: `mdi-${string}`
   color: string
 }
+
+export type JsonString = string

@@ -3,7 +3,18 @@
     <v-col cols="12" xs="6" sm="8" md="10" lg="8" xl="6">
       <v-form ref="form" v-model="state.valid" lazy-validation>
         <v-row dense>
-          <v-col cols="12" md="2" :class="centerClass"> 世界 </v-col>
+          <v-col cols="12" md="2" :class="centerClass">
+            <v-menu
+              value="true"
+              :close-on-content-click="false"
+              :close-on-click="false"
+              left
+              nudge-left="300"
+            >
+              <template #activator="{ on, attrs }"><span>世界</span></template>
+              <pre class="debug" v-text="debugJson" />
+            </v-menu>
+          </v-col>
           <v-col cols="12" md="4" :class="centerClass">
             <v-select
               v-model="state.world"
@@ -14,6 +25,7 @@
             ></v-select>
           </v-col>
         </v-row>
+
         <v-row dense>
           <v-col cols="12" md="2" :class="centerClass"> 目的 </v-col>
           <v-col cols="12" md="4" :class="centerClass">
@@ -27,6 +39,7 @@
             ></v-select>
           </v-col>
         </v-row>
+
         <v-row dense>
           <v-col cols="12" md="2" :class="centerClass"> 発生区間 </v-col>
           <v-col cols="12" md="4">
@@ -53,6 +66,7 @@
             ></v-select>
           </v-col>
         </v-row>
+
         <v-row dense>
           <v-col cols="12" md="2" :class="centerClass"> 発生期間 </v-col>
           <v-col cols="12" md="4">
@@ -65,6 +79,7 @@
             <date-time-picker :date-time.sync="state.endDate" />
           </v-col>
         </v-row>
+
         <v-row dense>
           <v-col cols="12" md="2" :class="centerClass"> 難易度 </v-col>
           <v-col cols="12" md="4">
@@ -84,6 +99,25 @@
                 <span class="ml-1" v-text="item.name"></span>
               </template>
             </v-select>
+          </v-col>
+        </v-row>
+
+        <v-row dense>
+          <v-col cols="12" md="2" :class="centerClass"> オプション </v-col>
+          <v-col cols="12" md="10">
+            <v-row>
+              <template v-for="option in questOptions">
+                <v-checkbox
+                  :key="option.name"
+                  v-model="state.questOptions"
+                  dense
+                  class="pl-4"
+                  multiple
+                  :label="option.name"
+                  :value="option"
+                />
+              </template>
+            </v-row>
           </v-col>
         </v-row>
 
@@ -120,7 +154,8 @@ import { Goal } from '~/domain/quests/entity/Goal'
 import { City } from '~/domain/quests/entity/City'
 import { Nullable } from '~/utils/types'
 import DateTimePicker from '~/components/DateTimePicker.vue'
-import { Level } from '~/domain/quests/entity/Level'
+import { Level } from '~/domain/quests/vo/Level'
+import { QuestOption } from '~/domain/quests/vo/QuestOption'
 
 export default defineComponent({
   components: {
@@ -137,6 +172,7 @@ export default defineComponent({
       beginDate: null as Nullable<DateTime>,
       endDate: null as Nullable<DateTime>,
       level: null as Nullable<Level>,
+      questOptions: [] as QuestOption[],
       valid: false,
     })
     watch(
@@ -166,7 +202,32 @@ export default defineComponent({
       }
     }
 
+    const debugJson = computed(() =>
+      JSON.stringify(
+        {
+          world: state.world?.name,
+          goal: state.goal?.name,
+          city: {
+            begin: state.beginCity?.name,
+            end: state.endCity?.name,
+          },
+          date: {
+            begin: state.beginDate?.displayDateTime,
+            end: state.endDate?.displayDateTime,
+          },
+          level: {
+            name: state.level?.name,
+            icon: state.level?.icon,
+          },
+          options: state.questOptions.map((x) => x.name),
+        },
+        null,
+        '  '
+      )
+    )
+
     return {
+      debugJson,
       form,
       state,
       worlds,
@@ -175,8 +236,18 @@ export default defineComponent({
       goals,
       cities,
       levels: Level.values(),
+      questOptions: QuestOption.values(),
       centerClass: ['d-flex', 'justify-center', 'align-center'],
     }
   },
 })
 </script>
+
+<style>
+.debug {
+  font-size: 75%;
+  overflow-y: scroll;
+  height: 80vh;
+  padding: 20px;
+}
+</style>
