@@ -14,24 +14,26 @@
             ></v-select>
           </v-col>
         </v-row>
-        <v-row v-if="state.world" dense>
+        <v-row dense>
           <v-col cols="12" md="2" :class="centerClass"> 目的 </v-col>
           <v-col cols="12" md="4" :class="centerClass">
             <v-select
               v-model="state.goal"
-              :items="state.world.goals"
+              :disabled="!state.world"
+              :items="goals"
               label="目的(必須)"
               return-object
               item-text="name"
             ></v-select>
           </v-col>
         </v-row>
-        <v-row v-if="state.goal" dense>
+        <v-row dense>
           <v-col cols="12" md="2" :class="centerClass"> 発生区間 </v-col>
           <v-col cols="12" md="4">
             <v-select
               v-model="state.beginCity"
-              :items="state.goal.cities"
+              :disabled="!state.goal"
+              :items="cities"
               label="区間(開始)"
               return-object
               item-text="name"
@@ -43,7 +45,8 @@
           <v-col cols="12" md="4">
             <v-select
               v-model="state.endCity"
-              :items="state.goal.cities"
+              :disabled="!state.goal"
+              :items="cities"
               label="区間(終了)"
               return-object
               item-text="name"
@@ -103,7 +106,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref } from '@vue/composition-api'
+import {
+  computed,
+  defineComponent,
+  reactive,
+  ref,
+  watch,
+} from '@vue/composition-api'
 import { DateTime } from 'owlelia'
 import { World } from '~/domain/quests/entity/World'
 import { worldStore } from '~/utils/store-accessor'
@@ -118,6 +127,8 @@ export default defineComponent({
     DateTimePicker,
   },
   setup() {
+    const form = ref<{ validate(): boolean }>()
+
     const state = reactive({
       world: null as Nullable<World>,
       goal: null as Nullable<Goal>,
@@ -128,10 +139,23 @@ export default defineComponent({
       level: null as Nullable<Level>,
       valid: false,
     })
-
-    const form = ref<{ validate(): boolean }>()
+    watch(
+      () => state.world,
+      (_) => {
+        state.goal = null
+      }
+    )
+    watch(
+      () => state.goal,
+      (_) => {
+        state.beginCity = null
+        state.endDate = null
+      }
+    )
 
     const worlds = computed(() => worldStore.worlds)
+    const goals = computed(() => state.world?.goals ?? [])
+    const cities = computed(() => state.goal?.cities ?? [])
     // FIXME:
     const submitError = null
     // const submitError = computed(() => eventStore.submitError)
@@ -148,6 +172,8 @@ export default defineComponent({
       worlds,
       submit,
       submitError,
+      goals,
+      cities,
       levels: Level.values(),
       centerClass: ['d-flex', 'justify-center', 'align-center'],
     }
