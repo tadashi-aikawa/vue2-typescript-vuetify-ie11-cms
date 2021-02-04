@@ -9,10 +9,17 @@
               :close-on-content-click="false"
               :close-on-click="false"
               left
-              nudge-left="300"
+              nudge-left="100"
             >
-              <template #activator="{ on, attrs }"><span>世界</span></template>
-              <pre class="debug" v-text="debugJson" />
+              <template #activator><span>世界</span></template>
+              <v-textarea
+                class="debug"
+                :value="debugJson"
+                auto-grow
+                outlined
+                full-width
+                readonly
+              />
             </v-menu>
           </v-col>
           <v-col cols="12" md="4" :class="centerClass">
@@ -121,6 +128,20 @@
           </v-col>
         </v-row>
 
+        <v-row dense class="mt-5">
+          <v-col cols="12" md="2" :class="centerClass">説明</v-col>
+          <v-col cols="12" md="10">
+            <v-textarea
+              v-model="state.description"
+              counter="150"
+              auto-grow
+              outlined
+            ></v-textarea>
+          </v-col>
+        </v-row>
+
+        <hr class="my-4 grey darken-1" />
+
         <div class="d-flex justify-center pa-6">
           <v-btn
             :disabled="!state.valid"
@@ -173,6 +194,7 @@ export default defineComponent({
       endDate: null as Nullable<DateTime>,
       level: null as Nullable<Level>,
       questOptions: [] as QuestOption[],
+      description: '',
       valid: false,
     })
     watch(
@@ -220,6 +242,7 @@ export default defineComponent({
             icon: state.level?.icon,
           },
           options: state.questOptions.map((x) => x.name),
+          description: state.description,
         },
         null,
         '  '
@@ -244,10 +267,10 @@ export default defineComponent({
 </script>
 
 <style>
-.debug {
+.debug textarea {
+  width: 25vw;
   font-size: 75%;
-  overflow-y: scroll;
-  height: 80vh;
-  padding: 20px;
+  line-height: 1.3rem;
+  color: darkgrey !important;
 }
 </style>
