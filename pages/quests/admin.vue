@@ -176,6 +176,7 @@ import DateTimePicker from '~/components/DateTimePicker.vue'
 import { Level } from '~/domain/quests/vo/Level'
 import { QuestOption } from '~/domain/quests/vo/QuestOption'
 import { Quest } from '~/domain/quests/entity/Quest'
+import { QuestId } from '~/domain/quests/vo/QuestId'
 
 export default defineComponent({
   components: {
@@ -203,14 +204,14 @@ export default defineComponent({
     watch(
       () => state.world,
       (_) => {
-        state.goal = null
+        state.goal = undefined
       }
     )
     watch(
       () => state.goal,
       (_) => {
-        state.beginCity = null
-        state.endDate = null
+        state.beginCity = undefined
+        state.endDate = undefined
       }
     )
 
@@ -226,11 +227,11 @@ export default defineComponent({
         // TODO: 登録処理
         questStore.updateCurrentQuest(
           Quest.of({
-            id: 'test',
+            id: 'test' as QuestId,
             ...state,
           })
         )
-        root.$options.router.push({ path: 'confirm' })
+        root.$options.router?.push({ path: 'confirm' })
       }
     }
 
