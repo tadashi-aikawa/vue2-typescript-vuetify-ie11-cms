@@ -27,7 +27,7 @@ import { defineComponent } from '@vue/composition-api'
 
 export default defineComponent({
   setup() {
-    const items: { name: string; path: string }[] = [
+    const items: { name: string; path: string; description: string }[] = [
       {
         name: 'クエスト管理',
         path: 'quests/admin',
