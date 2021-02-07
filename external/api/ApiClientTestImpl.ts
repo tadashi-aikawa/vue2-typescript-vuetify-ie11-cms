@@ -22,7 +22,12 @@ export class ApiClientTestImpl implements ApiClient {
   async addQuest(quest: Quest): Promise<Nullable<AddQuestError>> {
     this.quests.push(quest)
     await asyncSleep(1000)
-    return Promise.resolve(null)
+    // descriptionにerrorが入っていたらエラー
+    return quest.description.includes('error')
+      ? Promise.resolve(
+          new AddQuestError('説明文にerrorを入れたらエラーになっちゃいますよ！')
+        )
+      : Promise.resolve(null)
   }
 
   async fetchAllQuests(): Promise<Either<FetchAllQuestsError, Quest[]>> {

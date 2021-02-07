@@ -2,15 +2,19 @@
   <v-app dark>
     <template v-if="isLogin">
       <v-app-bar fixed app>
-        <v-toolbar-title v-text="env.japanese" />
-        <v-alert dense border="left" type="warning" class="ma-4">
+        <v-toolbar-title>
+          <v-icon>mdi-earth</v-icon>
+          <span>{{ env.japanese }}</span>
+        </v-toolbar-title>
+        <v-alert dense border="left" type="warning" class="ma-4 ml-15" outlined>
           <strong>
             イベント終了時刻が設定されていません。ただちに設定してください
           </strong>
         </v-alert>
         <v-spacer />
         <v-btn v-if="isLogin">
-          <v-icon>ログアウト</v-icon>
+          <v-icon>mdi-logout</v-icon>
+          <span class="ml-1">ログアウト</span>
         </v-btn>
       </v-app-bar>
       <template v-if="ready">
@@ -24,6 +28,9 @@
     <template v-else>
       <login />
     </template>
+    <v-snackbar :value="snackbar" centered>
+      <div :class="centerClass">登録に成功しました</div>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -57,10 +64,14 @@ export default defineComponent({
       questStore.fetchAllQuests()
     })
 
+    const snackbar = computed(() => questStore.addingStatus === 'success')
+
     return {
       env,
       ready,
       isLogin,
+      snackbar,
+      centerClass: ['d-flex', 'justify-center', 'align-center'],
     }
   },
 })

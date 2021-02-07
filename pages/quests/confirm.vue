@@ -66,6 +66,16 @@
             登録する
           </v-btn>
         </div>
+        <v-alert
+          v-if="submitError"
+          border="right"
+          colored-border
+          type="error"
+          elevation="2"
+        >
+          <h3>{{ submitError.name }} ({{ submitError.code }})</h3>
+          <div v-text="submitError.message"></div>
+        </v-alert>
       </v-col>
     </v-row>
   </div>
@@ -76,7 +86,7 @@ import { computed, defineComponent } from '@vue/composition-api'
 import { questStore } from '~/utils/store-accessor'
 
 export default defineComponent({
-  setup() {
+  setup(_props, { root }) {
     // この画面に入ったときquestがnullであることは想定しない
     const quest = computed(() => questStore.currentQuest!)
     const optionNames = computed(() =>
@@ -84,12 +94,13 @@ export default defineComponent({
     )
 
     const submitting = computed(() => questStore.addingStatus === 'loading')
+    const submitError = computed(() => questStore.addingError)
 
     const submit = async () => {
-      // FIXME
       await questStore.addQuest(quest.value)
-      await questStore.fetchAllQuests()
-      console.log(questStore.quests)
+      if (questStore.addingStatus !== 'failure') {
+        root.$options.router?.push({ path: '/' })
+      }
     }
 
     return {
@@ -97,6 +108,7 @@ export default defineComponent({
       optionNames,
       submit,
       submitting,
+      submitError,
       centerClass: ['d-flex', 'justify-center', 'align-center'],
     }
   },

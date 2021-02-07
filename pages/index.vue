@@ -6,12 +6,15 @@
         <template v-for="item in items">
           <v-card
             :key="item.path"
-            max-width="400"
-            class="mx-auto"
+            width="400"
+            class="mx-auto card"
+            outlined
+            shaped
             nuxt
             :to="item.path"
           >
             <v-card-title class="headline" v-text="item.name" />
+            <v-card-text v-text="item.description" />
           </v-card>
         </template>
       </v-row>
@@ -25,10 +28,26 @@ import { defineComponent } from '@vue/composition-api'
 export default defineComponent({
   setup() {
     const items: { name: string; path: string }[] = [
-      { name: 'クエスト管理', path: 'quests/admin' },
-      { name: 'ガチャ情報管理', path: 'gacha' },
-      { name: 'ガチャマスタ管理', path: 'gacha-master' },
-      { name: 'お知らせ管理', path: 'information' },
+      {
+        name: 'クエスト管理',
+        path: 'quests/admin',
+        description: 'クエストの追加をする画面です',
+      },
+      {
+        name: 'クエスト一覧',
+        path: 'quests',
+        description: 'クエストの一覧を表示し、編集/削除する画面です',
+      },
+      {
+        name: 'ガチャマスタ管理',
+        path: 'gacha-master',
+        description: 'Comming soon..',
+      },
+      {
+        name: 'お知らせ管理',
+        path: 'information',
+        description: 'ユーザー向けのお知らせを管理する画面です',
+      },
     ]
 
     return { items }

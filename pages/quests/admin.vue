@@ -258,7 +258,7 @@ export default defineComponent({
       goal: currentQuest.value?.goal,
       beginCity: currentQuest.value?.beginCity,
       endCity: currentQuest.value?.endCity,
-      beginDate: currentQuest.value?.beginDate,
+      beginDate: currentQuest.value?.beginDate ?? DateTime.now(),
       endDate: currentQuest.value?.endDate,
       level: currentQuest.value?.level,
       questOptions: currentQuest.value?.questOptions ?? [],
