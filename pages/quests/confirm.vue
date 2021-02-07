@@ -41,7 +41,7 @@
               <tr>
                 <td>オプション</td>
                 <td>
-                  <ul v-for="name in optionNames">
+                  <ul v-for="name in optionNames" :key="name">
                     <li>{{ name }}</li>
                   </ul>
                 </td>
@@ -57,7 +57,14 @@
         </v-simple-table>
 
         <div class="d-flex justify-center pa-6">
-          <v-btn color="success darken-2" class="mr-4"> 登録する </v-btn>
+          <v-btn
+            color="success darken-2"
+            class="mr-4"
+            :loading="submitting"
+            @click="submit"
+          >
+            登録する
+          </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -70,13 +77,26 @@ import { questStore } from '~/utils/store-accessor'
 
 export default defineComponent({
   setup() {
-    const quest = computed(() => questStore.currentQuest)
+    // この画面に入ったときquestがnullであることは想定しない
+    const quest = computed(() => questStore.currentQuest!)
     const optionNames = computed(() =>
       quest.value?.questOptions.map((x) => x.name)
     )
+
+    const submitting = computed(() => questStore.addingStatus === 'loading')
+
+    const submit = async () => {
+      // FIXME
+      await questStore.addQuest(quest.value)
+      await questStore.fetchAllQuests()
+      console.log(questStore.quests)
+    }
+
     return {
       quest,
       optionNames,
+      submit,
+      submitting,
       centerClass: ['d-flex', 'justify-center', 'align-center'],
     }
   },

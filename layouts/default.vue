@@ -31,7 +31,12 @@
 import { computed, defineComponent, onMounted } from '@vue/composition-api'
 import { getEnv } from '~/utils/env'
 import Login from '~/pages/login.vue'
-import { worldStore } from '~/utils/store-accessor'
+import {
+  cityStore,
+  goalStore,
+  questStore,
+  worldStore,
+} from '~/utils/store-accessor'
 
 export default defineComponent({
   components: {
@@ -45,7 +50,12 @@ export default defineComponent({
     // const isLogin = computed(() => userStore.isLogin)
     const isLogin = true
 
-    onMounted(() => worldStore.fetchWorlds())
+    onMounted(() => {
+      worldStore.fetchWorlds()
+      goalStore.fetchGoals()
+      cityStore.fetchCities()
+      questStore.fetchAllQuests()
+    })
 
     return {
       env,

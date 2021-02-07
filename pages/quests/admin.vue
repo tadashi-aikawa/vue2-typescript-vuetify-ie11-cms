@@ -150,7 +150,7 @@
             :disabled="!state.valid"
             color="success darken-2"
             class="mr-4"
-            @click="submit"
+            @click="moveToConfirm"
           >
             確認画面へ移動する
           </v-btn>
@@ -169,14 +169,78 @@ import {
   defineComponent,
   reactive,
   ref,
+  UnwrapRef,
   watch,
 } from '@vue/composition-api'
-import { questStore, worldStore } from '~/utils/store-accessor'
+import { DateTime } from 'owlelia'
+import {
+  cityStore,
+  goalStore,
+  questStore,
+  worldStore,
+} from '~/utils/store-accessor'
 import DateTimePicker from '~/components/DateTimePicker.vue'
 import { Level } from '~/domain/quests/vo/Level'
 import { QuestOption } from '~/domain/quests/vo/QuestOption'
 import { Quest } from '~/domain/quests/entity/Quest'
 import { QuestId } from '~/domain/quests/vo/QuestId'
+import { World } from '~/domain/quests/entity/World'
+import { Goal } from '~/domain/quests/entity/Goal'
+import { City } from '~/domain/quests/entity/City'
+import { JsonString } from '~/utils/types'
+
+interface State {
+  world?: World
+  goal?: Goal
+  beginCity?: City
+  endCity?: City
+  beginDate?: DateTime
+  endDate?: DateTime
+  level?: Level
+  questOptions: QuestOption[]
+  description?: string
+  valid: boolean
+}
+
+// TODO: この関数が呼ばれるときはnullになっていないはずだが、null安全な実装(例外判定)にしたい
+// TODO: 組み合わせバリデーションをする場合、そこでまとめて行う (Quest.try)
+const formToEntity = (form: UnwrapRef<State>): Quest =>
+  Quest.of({
+    id: 'test' as QuestId,
+    world: form.world! as World,
+    goal: form.goal! as Goal,
+    beginCity: form.beginCity! as City,
+    endCity: form.endCity! as City,
+    beginDate: form.beginDate! as DateTime,
+    endDate: form.endDate! as DateTime,
+    level: form.level!,
+    questOptions: form.questOptions,
+    description: form.description!,
+  })
+
+const formToDebugJsonStr = (form: UnwrapRef<State>): JsonString =>
+  JSON.stringify(
+    {
+      world: form.world?.name,
+      goal: form.goal?.name,
+      city: {
+        begin: form.beginCity?.name,
+        end: form.endCity?.name,
+      },
+      date: {
+        begin: form.beginDate?.displayDateTime,
+        end: form.endDate?.displayDateTime,
+      },
+      level: {
+        name: form.level?.name,
+        icon: form.level?.icon,
+      },
+      options: form.questOptions.map((x) => x.name),
+      description: form.description,
+    },
+    null,
+    '  '
+  )
 
 export default defineComponent({
   components: {
@@ -189,7 +253,7 @@ export default defineComponent({
 
     const currentQuest = computed(() => questStore.currentQuest)
 
-    const state = reactive({
+    const state = reactive<State>({
       world: currentQuest.value?.world,
       goal: currentQuest.value?.goal,
       beginCity: currentQuest.value?.beginCity,
@@ -197,7 +261,7 @@ export default defineComponent({
       beginDate: currentQuest.value?.beginDate,
       endDate: currentQuest.value?.endDate,
       level: currentQuest.value?.level,
-      questOptions: currentQuest.value?.questOptions ?? ([] as QuestOption[]),
+      questOptions: currentQuest.value?.questOptions ?? [],
       description: currentQuest.value?.description,
       valid: false,
     })
@@ -211,61 +275,36 @@ export default defineComponent({
       () => state.goal,
       (_) => {
         state.beginCity = undefined
-        state.endDate = undefined
+        state.endCity = undefined
       }
     )
 
     const worlds = computed(() => worldStore.worlds)
-    const goals = computed(() => state.world?.goals ?? [])
-    const cities = computed(() => state.goal?.cities ?? [])
+    const goals = computed(() =>
+      state.world ? goalStore.getGoalsByWorld(state.world as World) : []
+    )
+    const cities = computed(() =>
+      state.goal ? cityStore.getCitiesByGoal(state.goal as Goal) : []
+    )
     // FIXME:
     const submitError = null
     // const submitError = computed(() => eventStore.submitError)
 
-    const submit = () => {
+    const moveToConfirm = () => {
       if (form.value?.validate()) {
-        // TODO: 登録処理
-        questStore.updateCurrentQuest(
-          Quest.of({
-            id: 'test' as QuestId,
-            ...state,
-          })
-        )
+        questStore.updateCurrentQuest(formToEntity(state))
         root.$options.router?.push({ path: 'confirm' })
       }
     }
 
-    const debugJson = computed(() =>
-      JSON.stringify(
-        {
-          world: state.world?.name,
-          goal: state.goal?.name,
-          city: {
-            begin: state.beginCity?.name,
-            end: state.endCity?.name,
-          },
-          date: {
-            begin: state.beginDate?.displayDateTime,
-            end: state.endDate?.displayDateTime,
-          },
-          level: {
-            name: state.level?.name,
-            icon: state.level?.icon,
-          },
-          options: state.questOptions.map((x) => x.name),
-          description: state.description,
-        },
-        null,
-        '  '
-      )
-    )
+    const debugJson = computed(() => formToDebugJsonStr(state))
 
     return {
       debugJson,
       form,
       state,
       worlds,
-      submit,
+      moveToConfirm,
       submitError,
       goals,
       cities,

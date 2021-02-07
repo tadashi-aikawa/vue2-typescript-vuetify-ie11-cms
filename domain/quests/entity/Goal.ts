@@ -1,10 +1,10 @@
 import { Entity } from 'owlelia'
 import { GoalName } from '~/domain/quests/vo/GoalName'
-import { City } from '~/domain/quests/entity/City'
+import { WorldName } from '~/domain/quests/vo/WorldName'
 
 interface Props {
   name: GoalName
-  cities: City[]
+  worldName: WorldName
 }
 
 declare const _brand: unique symbol
@@ -19,7 +19,7 @@ export class Goal extends Entity<Props> {
     return this._props.name
   }
 
-  get cities(): City[] {
-    return this._props.cities
+  get worldName(): WorldName {
+    return this._props.worldName
   }
 }

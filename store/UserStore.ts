@@ -1,11 +1,11 @@
 import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import { UserId } from '~/domain/users/vo/UserId'
 import { User } from '~/domain/users/entity/User'
-import { CogniteUserService } from '~/app/CogniteUserService'
+import { UserServiceImpl } from '~/app/UserServiceImpl'
 import { LoginError } from '~/app/UserService'
 import { Status } from '~/utils/status'
 
-const userService = new CogniteUserService('TODO')
+const userService = new UserServiceImpl('TODO')
 
 @Module({ name: 'UserStore', namespaced: true, stateFactory: true })
 export default class UserStore extends VuexModule {

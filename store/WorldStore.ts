@@ -2,9 +2,9 @@ import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import { Status } from '~/utils/status'
 import { World } from '~/domain/quests/entity/World'
 import { FetchAllError } from '~/app/WorldService'
-import { FixedWorldService } from '~/app/FixedWorldService'
+import { WorldServiceFixedImpl } from '~/app/WorldServiceFixedImpl'
 
-const worldService = new FixedWorldService()
+const worldService = new WorldServiceFixedImpl()
 
 @Module({ name: 'WorldStore', namespaced: true, stateFactory: true })
 export default class WorldStore extends VuexModule {

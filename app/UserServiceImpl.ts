@@ -6,7 +6,7 @@ import { asyncSleep } from '~/utils/sleep'
 
 type CogniteClientFaked = any
 
-export class CogniteUserService implements UserService {
+export class UserServiceImpl implements UserService {
   private client: CogniteClientFaked
 
   constructor(client: CogniteClientFaked) {
