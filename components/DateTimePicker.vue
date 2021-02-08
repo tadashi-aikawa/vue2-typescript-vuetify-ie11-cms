@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from '@vue/composition-api'
+import { defineComponent, reactive, watch } from '@vue/composition-api'
 import { DateTime } from 'owlelia'
 import { Nullable } from '~/utils/types'
 
@@ -64,11 +64,20 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const state = reactive({
-      displayDate: props.dateTime?.displayDate ?? '',
-      displayTime: props.dateTime?.displayTime ?? '',
+      displayDate: '',
+      displayTime: '',
       dateMenu: false,
       timeMenu: false,
     })
+
+    watch(
+      () => props.dateTime,
+      (_) => {
+        state.displayDate = props.dateTime?.displayDate ?? ''
+        state.displayTime = props.dateTime?.displayTime ?? ''
+      },
+      { immediate: true }
+    )
 
     const changeDate = (date: string) => {
       emit('update:dateTime', DateTime.of(`${date} ${state.displayTime}`))

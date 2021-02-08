@@ -10,6 +10,7 @@
         max-width="400"
         absolute
       >
+        <v-btn @click="fillForDebug">Atsushi</v-btn>
         <v-textarea
           class="debug"
           :value="debugJson"
@@ -188,6 +189,9 @@ import { World } from '~/domain/quests/entity/World'
 import { Goal } from '~/domain/quests/entity/Goal'
 import { City } from '~/domain/quests/entity/City'
 import { JsonString } from '~/utils/types'
+import { WorldName } from '~/domain/quests/vo/WorldName'
+import { GoalName } from '~/domain/quests/vo/GoalName'
+import { CityName } from '~/domain/quests/vo/CityName'
 
 interface State {
   world?: World
@@ -297,7 +301,18 @@ export default defineComponent({
       }
     }
 
+    // Debug only
     const debugJson = computed(() => formToDebugJsonStr(state))
+    const fillForDebug = () => {
+      state.world = World.of({
+        name: '天使の大陸' as WorldName,
+      })
+      state.beginDate = DateTime.now()
+      state.endDate = DateTime.now().plusHours(1)
+      state.level = Level.NORMAL
+      state.questOptions = [QuestOption.UNLIMITED_CHALLENGE]
+      state.description = 'Atsushi Atsushi Forever'
+    }
 
     return {
       debugJson,
@@ -311,6 +326,7 @@ export default defineComponent({
       levels: Level.values(),
       questOptions: QuestOption.values(),
       centerClass: ['d-flex', 'justify-center', 'align-center'],
+      fillForDebug,
     }
   },
 })
