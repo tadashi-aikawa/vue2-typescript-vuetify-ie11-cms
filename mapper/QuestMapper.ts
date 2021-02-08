@@ -83,8 +83,8 @@ export function domainToApi(quest: Quest): Client.Quest {
       },
     },
     date: {
-      begin: quest.beginCity.name,
-      end: quest.endCity.name,
+      begin: quest.beginDate.rfc3339,
+      end: quest.endDate.rfc3339,
     },
     level: {
       name: quest.level.name,
